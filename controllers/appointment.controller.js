@@ -72,4 +72,20 @@ const getAllAppointments = async (req, res) => {
   }
 }
 
-module.exports = { bookAppointment, getMyAppointments, getDoctorAppointments, updateAppointmentStatus, rescheduleAppointment, getAllAppointments }
+const markCompleted = async (req, res) => {
+  try {
+    const { id } = req.params
+    const [rows] = await db.query("SELECT * FROM appointments WHERE id = ?", [id])
+    if (!rows.length) return res.status(404).json({ message: "Appointment not found" })
+    const apt = rows[0]
+    await db.query("UPDATE appointments SET status = 'completed' WHERE id = ?", [id])
+    await db.query("UPDATE doctors SET total_consultations = total_consultations + 1 WHERE user_id = ?", [apt.doctor_id])
+    res.json({ message: "Appointment marked as completed" })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+}
+
+module.exports = { markCompleted, bookAppointment, getMyAppointments, getDoctorAppointments, updateAppointmentStatus, rescheduleAppointment, getAllAppointments }
+
+
