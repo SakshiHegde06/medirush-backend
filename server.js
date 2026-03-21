@@ -98,6 +98,7 @@ app.use("/api/patients", require("./routes/patient.routes"))
 app.use("/api/admin", require("./routes/admin.routes"))
 app.use("/api/ratings", require("./routes/rating.routes"))
 app.use("/api/payments", require("./routes/payment.routes"))
+app.use("/api/slots", require("./routes/slots.routes"))
 app.use("/api/consultations", require("./routes/consultation.routes"))
 
 app.get("/", (req, res) => res.json({ message: "MediRush API running!", version: "1.0.0" }))
@@ -105,3 +106,4 @@ app.use(require("./middleware/errorHandler"))
 
 const PORT = process.env.PORT || 5000
 server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`))
+

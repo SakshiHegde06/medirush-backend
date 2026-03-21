@@ -12,7 +12,7 @@ const submitRating = async (req, res) => {
       "SELECT AVG(rating) as avg_rating, COUNT(*) as count FROM ratings WHERE doctor_id = ?", [doctor_id]
     )
     await db.query("UPDATE doctors SET rating = ?, total_consultations = ? WHERE user_id = ?",
-      [avg_rating.toFixed(2), count, doctor_id])
+      [parseFloat(avg_rating).toFixed(2), count, doctor_id])
     res.status(201).json({ message: "Rating submitted successfully" })
   } catch (err) {
     res.status(500).json({ message: err.message })
@@ -30,3 +30,4 @@ const getDoctorRatings = async (req, res) => {
 }
 
 module.exports = { submitRating, getDoctorRatings }
+

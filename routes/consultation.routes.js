@@ -32,14 +32,24 @@ router.get("/my", protect, patientOnly, async (req, res) => {
   }
 })
 
+router.get("/doctor", protect, async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      "SELECT * FROM consultations WHERE doctor_id = ? ORDER BY created_at DESC",
+      [req.user.id]
+    )
+    res.json(rows)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
 router.get("/stats", protect, patientOnly, async (req, res) => {
   try {
-    // Token payments (Rs.250 per appointment)
     const [[{ token_spent }]] = await db.query(
       "SELECT COALESCE(SUM(amount), 0) as token_spent FROM payments WHERE user_id = ?",
       [req.user.id]
     )
-    // Consultation fees paid online
     const [[{ consult_spent }]] = await db.query(
       "SELECT COALESCE(SUM(fee), 0) as consult_spent FROM consultations WHERE patient_id = ?",
       [req.user.id]
