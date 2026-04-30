@@ -1,19 +1,16 @@
-﻿const mysql = require("mysql2")
-require("dotenv").config()
+﻿const mysql = require("mysql2/promise")
 
 const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "Sak@24680",
+  database: process.env.DB_NAME || "medirush_db",
   waitForConnections: true,
   connectionLimit: 10,
 })
 
-const db = pool.promise()
+pool.query("SELECT 1")
+  .then(() => console.log("MySQL connected successfully"))
+  .catch(err => console.error("MySQL connection failed:", err.message))
 
-db.query("SELECT 1")
-  .then(() => console.log("✅ MySQL connected successfully"))
-  .catch(err => console.error("❌ MySQL connection failed:", err.message))
-
-module.exports = db
+module.exports = pool
